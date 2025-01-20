@@ -1,49 +1,56 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
+#include <stdlib.h>
 
-typedef struct{
-	unsigned short numero;
-	unsigned short posicao;
-} pessoa;
+void lerVetor(int *vetor, int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%d", &vetor[i]);
+    }
+}
 
+void processarFila(int *filaInicial, int n, int *saida, int m, int *filaFinal, int *tamanhoFinal) {
+    int *marcados = (int *)calloc(100001, sizeof(int));
 
-void main (){
+    for (int i = 0; i < m; i++) {
+        marcados[saida[i]] = 1;
+    }
 
-	unsigned short qtsPessoas, qtsPessoasSairam;
-	unsigned short i, idPessoa;
-	pessoa fila[51000];
+    *tamanhoFinal = 0;
+    for (int i = 0; i < n; i++) {
+        if (!marcados[filaInicial[i]]) {
+            filaFinal[(*tamanhoFinal)++] = filaInicial[i];
+        }
+    }
 
-	scanf("%hu", &qtsPessoas);
+    free(marcados);
+}
 
-	memset(fila, 0, sizeof(fila));
+int main() {
+    int n, m;
 
-	for (i = 0; i < qtsPessoas; i++) {
-		scanf("%hu", &idPessoa);
-		fila[i].numero = idPessoa;
-		fila[idPessoa].posicao = i;
+    scanf("%d", &n);
 
-	}
+    int *filaInicial = (int *)malloc(n * sizeof(int));
 
-	scanf("%hu", &qtsPessoasSairam);
+    lerVetor(filaInicial, n);
 
-	for (i = 0; i < qtsPessoasSairam; i++){
+    scanf("%d", &m);
 
-		scanf("%hd", &idPessoa);
-		fila[fila[idPessoa].posicao].numero = 0;
+    int *saida = (int *)malloc(m * sizeof(int));
 
-	}
+    lerVetor(saida, m);
 
-	bool primEspaco = false;
-	for (i = 0; i < qtsPessoas; i++)
-		if (fila[i].numero) {
-			if (primEspaco == true && i != qtsPessoas){
-        printf(" ");
-      }
+    int *filaFinal = (int *)malloc((n - m) * sizeof(int));
+    int tamanhoFinal;
 
-			primEspaco = true;
-			printf("%hu", fila[i].numero);
-		}
+    processarFila(filaInicial, n, saida, m, filaFinal, &tamanhoFinal);
 
-	printf("\n");
+    for (int i = 0; i < tamanhoFinal; i++) {
+        printf("%d%c", filaFinal[i], (i == tamanhoFinal - 1) ? '\n' : ' ');
+    }
+
+    free(filaInicial);
+    free(saida);
+    free(filaFinal);
+
+    return 0;
 }
